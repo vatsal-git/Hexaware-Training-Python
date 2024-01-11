@@ -43,10 +43,13 @@ def q3(n=371):
         return True
     if n < 10:
         return False
+    
+    a = n // 10
+    b = n - (a * 10)
 
-    return q3(n // 10 - 2 * (n % 10))
+    return q3(a - 2 * b)
 
-print(q3(12312312))
+print(q3(70))
 
 
 print('\n')
