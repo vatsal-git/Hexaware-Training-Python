@@ -1,0 +1,532 @@
+2024-02-03 00:23:00,409 - ERROR - Max retries reached. Unable to connect to the database.
+NoneType: None
+2024-02-03 02:12:00,743 - ERROR - Max retries reached. Unable to connect to the database.
+NoneType: None
+2024-02-03 02:14:13,013 - ERROR - Max retries reached. Unable to connect to the database.
+NoneType: None
+2024-02-03 02:48:37,278 - ERROR - Email address is already registered.
+NoneType: None
+2024-02-03 02:54:43,497 - ERROR - Email address is already registered.
+NoneType: None
+2024-02-03 02:58:17,256 - ERROR - Email address is already registered.
+NoneType: None
+2024-02-03 03:00:25,681 - ERROR - Email address is already registered.
+NoneType: None
+2024-02-03 03:03:02,433 - ERROR - Email address is already registered.
+NoneType: None
+2024-02-03 03:03:28,968 - ERROR - Email address is already registered.
+NoneType: None
+2024-02-03 03:07:34,058 - ERROR - Customer Id not matching any records.
+NoneType: None
+2024-02-03 10:19:39,792 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 10:24:49,448 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 10:25:44,040 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 10:26:15,984 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 10:37:58,388 - ERROR - Customer Id not matching any records.
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\main\interface.py", line 53, in main
+    product_service.update_product_information()
+    ^^^^^^^^^^^^^^^
+NameError: name 'product_service' is not defined. Did you mean: 'product_choice'?
+2024-02-03 10:58:21,167 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 10:59:10,382 - ERROR - Invalid email format.
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\main\interface.py", line 41, in main
+    customer_services.update_customer_account()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\customer_services.py", line 59, in update_customer_account
+    customer.email = update_input['email']
+    ^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\models\customer.py", line 81, in email
+    raise InvalidEmailError("Invalid email format.")
+utils.exceptions.InvalidEmailError: Invalid email format.
+2024-02-03 11:04:17,664 - ERROR - Invalid email format.
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\main\interface.py", line 41, in main
+    customer_services.update_customer_account()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\customer_services.py", line 42, in update_customer_account
+    customer_id = int(input("\nEnter customer ID to update: "))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'qwe'
+2024-02-03 11:05:07,687 - ERROR - Customer Id not matching any records.
+NoneType: None
+2024-02-03 11:07:43,775 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 13:15:06,073 - ERROR - Invalid email format.
+NoneType: None
+2024-02-03 13:15:23,637 - ERROR - Description should have at least 10 characters.
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 43, in main
+    customer_services.register_customer()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\customer_services.py", line 19, in register_customer
+    customer.email = user_input['email']
+    ^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\models\customer.py", line 81, in email
+    raise InvalidEmailError("Invalid email format.")
+utils.exceptions.InvalidEmailError: Invalid email format.
+2024-02-03 13:15:47,486 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 43, in main
+    customer_services.register_customer()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\customer_services.py", line 19, in register_customer
+    customer.email = user_input['email']
+    ^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\models\customer.py", line 81, in email
+    raise InvalidEmailError("Invalid email format.")
+utils.exceptions.InvalidEmailError: Invalid email format.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 55, in main
+    product_services.add_new_product()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 17, in add_new_product
+    product.description = product_input['description']
+    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\models\product.py", line 55, in description
+    raise InvalidStringError("Description should have at least 10 characters.")
+utils.exceptions.InvalidStringError: Description should have at least 10 characters.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 50, in execute_query
+    self.cursor.execute(sql_query, params)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 13:32:32,297 - ERROR - Max retries reached. Unable to connect to the database.
+NoneType: None
+2024-02-03 13:33:45,310 - ERROR - Max retries reached. Unable to connect to the database.
+NoneType: None
+2024-02-03 13:35:55,560 - ERROR - Max retries reached. Unable to connect to the database.
+NoneType: None
+2024-02-03 13:36:11,462 - ERROR - Max retries reached. Unable to connect to the database.
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 24, in main
+    db_services.connect(1, 1)
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 35, in connect
+    raise SqlException("Max retries reached. Unable to connect to the database.")
+utils.exceptions.SqlException: Max retries reached. Unable to connect to the database.
+2024-02-03 13:59:34,764 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:00:14,447 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:00:44,809 - ERROR - Max retries reached. Unable to connect to the database.
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 69, in main
+    order_services.place_new_order()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 20, in place_new_order
+    product_ids = self.take_order_input()
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 81, in take_order_input
+    all_products = self.product_services.get_all_products()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 136, in get_all_products
+    result = self.db_services.execute_query(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 57, in execute_query
+    raise SqlException(f"Error executing query: {ex}")
+utils.exceptions.SqlException: Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:17:13,233 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 50, in execute_query
+    self.cursor.execute(sql_query, params)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:18:41,756 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 50, in execute_query
+    self.cursor.execute(sql_query, params)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 55, in main
+    product_services.add_new_product()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 22, in add_new_product
+    if self.is_product_name_registered(product.product_name):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 113, in is_product_name_registered
+    result = self.db_services.execute_query(query, (product_name,))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 57, in execute_query
+    raise SqlException(f"Error executing query: {ex}")
+utils.exceptions.SqlException: Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 50, in execute_query
+    self.cursor.execute(sql_query, params)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:24:16,633 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:25:00,994 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 69, in main
+    order_services.place_new_order()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 20, in place_new_order
+    product_ids = self.take_order_input()
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 81, in take_order_input
+    all_products = self.product_services.get_all_products()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 136, in get_all_products
+    result = self.db_services.execute_query(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 57, in execute_query
+    raise SqlException(f"Error executing query: {ex}")
+utils.exceptions.SqlException: Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:25:37,572 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 69, in main
+    order_services.place_new_order()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 20, in place_new_order
+    product_ids = self.take_order_input()
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 81, in take_order_input
+    all_products = self.product_services.get_all_products()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 136, in get_all_products
+    result = self.db_services.execute_query(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 57, in execute_query
+    raise SqlException(f"Error executing query: {ex}")
+utils.exceptions.SqlException: Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 69, in main
+    order_services.place_new_order()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 20, in place_new_order
+    product_ids = self.take_order_input()
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 81, in take_order_input
+    all_products = self.product_services.get_all_products()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\product_services.py", line 136, in get_all_products
+    result = self.db_services.execute_query(query)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 57, in execute_query
+    raise SqlException(f"Error executing query: {ex}")
+utils.exceptions.SqlException: Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:47:20,759 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 14:58:34,176 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\view\interface.py", line 71, in main
+    order_services.track_order_status()
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\order_services.py", line 46, in track_order_status
+    order = self.db_services.get_order_by_id(order_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DatabaseServices' object has no attribute 'get_order_by_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 52, in execute_query
+    self.cursor.execute(sql_query)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
+2024-02-03 16:06:28,181 - ERROR - Error executing query: 2013 (HY000): Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 661, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\vatsa\My Folder\Hexaware Training (Jan-Feb)\Assignments\Assignment 1\Tech Shop OOPs\services\database_services.py", line 50, in execute_query
+    self.cursor.execute(sql_query, params)
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\cursor_cext.py", line 374, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 74, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vatsa\AppData\Local\Programs\Python\Python312\Lib\site-packages\mysql\connector\connection_cext.py", line 669, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.OperationalError: 2013 (HY000): Lost connection to MySQL server during query
