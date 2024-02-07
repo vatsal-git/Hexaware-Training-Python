@@ -8,7 +8,6 @@ from exceptions.OrderRetrievalError import OrderRetrievalError
 from exceptions.ProductCreationError import ProductCreationError
 from exceptions.ProductNotFoundException import ProductNotFoundException
 from exceptions.ProductRetrievalError import ProductRetrievalError
-from exceptions.UnauthorizedUserError import UnauthorizedUserError
 from exceptions.UserCreationError import UserCreationError
 from exceptions.UserNotFoundException import UserNotFoundException
 from exceptions.UserRetrievalError import UserRetrievalError
@@ -19,31 +18,46 @@ class OrderProcessor(IOrderManagementRepository):
     def __init__(self, db_context):
         self.db_context = db_context
 
-    def createOrder(self, user, products):
+    def createOrder(self, user_id, product_ids):
         try:
             connection = self.db_context.getDBConn()
-            cursor = connection.cursor()
+            cursor = connection.cursor(dictionary=True)
 
-            # Insert user if not exists
-            cursor.execute("INSERT IGNORE INTO users (user_id, username, password, role) VALUES (%s, %s, %s, %s)",
-                           (user.user_id, user.username, user.password, user.role))
+            # Check if the user has an active order, if not, create one
+            cursor.execute("SELECT * FROM orders WHERE user_id = %s AND order_status = 'Placed'", (user_id,))
+            active_order = cursor.fetchone()
 
-            # Insert order
-            cursor.execute("INSERT INTO orders (user_id) VALUES (%s)", (user.user_id,))
-            order_id = cursor.lastrowid  # Get the ID of the last inserted row
+            if not active_order:
+                cursor.execute("INSERT INTO orders (user_id) VALUES (%s)", (user_id,))
+                connection.commit()
 
-            # Insert products in the order
-            for product in products:
-                cursor.execute("INSERT INTO order_products (order_id, product_id) VALUES (%s, %s)",
-                               (order_id, product.productId))
+            # Get the order_id for the user's placed order
+            cursor.execute("SELECT order_id FROM orders WHERE user_id = %s AND order_status = 'Placed'",
+                           (user_id,))
+            order_id = cursor.fetchone()['order_id']
 
-            connection.commit()
+            # Add the products to the order_products table
+            for i, product_id in enumerate(product_ids):
+                # Check if the product exists
+                cursor.execute("SELECT * FROM products WHERE product_id = %s", (product_id,))
+                product = cursor.fetchone()
+
+                if not product:
+                    raise ProductNotFoundException(f"Product with ID {product_id} not found.")
+
+                # Add the product to the order_products table
+                cursor.execute("""
+                    INSERT INTO order_products (order_id, product_id)
+                    VALUES (%s, %s)
+                """, (order_id, product_id))
+                connection.commit()
+
             cursor.close()
             connection.close()
-            return f"Order created successfully with ID: {order_id}"
+            return f"Products added to the order successfully."
 
         except mysql.connector.Error as err:
-            raise OrderProcessorException(f"Error creating order: {err}")
+            raise OrderCreationError(f"Error adding products to order: {err}")
 
     def cancelOrder(self, userId, orderId):
         try:
@@ -162,49 +176,7 @@ class OrderProcessor(IOrderManagementRepository):
             if user:
                 return User(user['username'], user['password'], user['role']), user['user_id']
             else:
-                raise UserNotFoundException("User not found with the given credentials.")
+                raise UserNotFoundException("Invalid username or password. Please try again.")
 
         except mysql.connector.Error as err:
             raise UserRetrievalError(f"Error retrieving user: {err}")
-
-    def addToOrder(self, user_id, product_ids):
-        try:
-            connection = self.db_context.getDBConn()
-            cursor = connection.cursor(dictionary=True)
-
-            # Check if the user has an active order, if not, create one
-            cursor.execute("SELECT * FROM orders WHERE user_id = %s AND order_status = 'Placed'", (user_id,))
-            active_order = cursor.fetchone()
-
-            if not active_order:
-                cursor.execute("INSERT INTO orders (user_id) VALUES (%s)", (user_id,))
-                connection.commit()
-
-            # Get the order_id for the user's placed order
-            cursor.execute("SELECT order_id FROM orders WHERE user_id = %s AND order_status = 'Placed'",
-                           (user_id,))
-            order_id = cursor.fetchone()['order_id']
-
-            # Add the products to the order_products table
-            for i, product_id in enumerate(product_ids):
-                # Check if the product exists
-                cursor.execute("SELECT * FROM products WHERE product_id = %s", (product_id,))
-                product = cursor.fetchone()
-
-                if not product:
-                    raise ProductNotFoundException(f"Product with ID {product_id} not found.")
-
-                # Add the product to the order_products table
-                cursor.execute("""
-                    INSERT INTO order_products (order_id, product_id)
-                    VALUES (%s, %s)
-                """, (order_id, product_id))
-                connection.commit()
-
-            cursor.close()
-            connection.close()
-            return f"Products added to the order successfully."
-
-        except mysql.connector.Error as err:
-            raise OrderCreationError(f"Error adding products to order: {err}")
-

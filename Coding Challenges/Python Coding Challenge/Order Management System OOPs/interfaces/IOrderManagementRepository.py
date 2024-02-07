@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class IOrderManagementRepository(ABC):
     @abstractmethod
-    def createOrder(self, user, products):
+    def createOrder(self, user_id, product_ids):
         pass
 
     @abstractmethod
@@ -24,4 +24,8 @@ class IOrderManagementRepository(ABC):
 
     @abstractmethod
     def getOrderByUser(self, user):
+        pass
+
+    @abstractmethod
+    def getUserByUsernameAndPassword(self, username, password):
         pass

@@ -13,10 +13,10 @@ from utils.Validator import InputValidator
 
 
 class MainModule:
-    def __init__(self, new_db_context):
+    def __init__(self, new_db_context, user_data=None):
         self.isAuthenticated = False
         self.isAdmin = False
-        self.user_data = None
+        self.user_data = user_data
         self.customer_service = CustomerService(new_db_context)
         self.admin_service = AdminService(new_db_context)
         self.vehicle_service = VehicleService(new_db_context)
@@ -28,9 +28,9 @@ class MainModule:
     def main_menu(self):
         if not self.isAuthenticated:
             self.default_menu()
-        elif self.isAuthenticated and not self.isAdmin:
+        elif self.isAuthenticated and not self.isAdmin and self.user_data:
             self.user_menu(self.user_data)
-        elif self.isAuthenticated and self.isAdmin:
+        elif self.isAuthenticated and self.isAdmin and self.user_data:
             self.admin_menu(self.user_data)
 
     def default_menu(self):
@@ -106,7 +106,7 @@ class MainModule:
             self.customer_service.register_customer(customer_data)
             print("User registered successfully!")
 
-        except InvalidInputException as e:
+        except Exception as e:
             print(f"Error: {e}")
 
     def admin_auth_menu(self):

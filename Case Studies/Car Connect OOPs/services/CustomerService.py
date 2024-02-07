@@ -1,6 +1,8 @@
 from datetime import datetime
+import mysql.connector
 
 from exceptions.CustomerNotFoundException import CustomerNotFoundException
+from exceptions.InvalidInputException import InvalidInputException
 from interfaces.ICustomerService import ICustomerService
 from entities.Customer import Customer
 from utils.Validator import InputValidator
@@ -48,7 +50,12 @@ class CustomerService(ICustomerService):
             customer_data['Password'],
             datetime.now()
         )
-        self.db_context.execute_query(query, params)
+
+        try:
+            self.db_context.execute_query(query, params)
+
+        except mysql.connector.Error as err:
+            raise InvalidInputException(f"Error creating order: {err}")
 
     def update_customer(self, customer_data):
         self.get_customer_by_id(customer_data['CustomerID'])  # Validate if customer exists
