@@ -13,28 +13,29 @@ class TestUpdateVehicleDetails(unittest.TestCase):
 
     def test_update_vehicle_details(self):
         updated_vehicle_data = {
-            'VehicleID': 1,
-            'Model': 'Updated Model',
-            'Make': 'Updated Make',
+            'VehicleID': 5,
+            'Model': 'gggg',
+            'Make': 'hhhh',
             'Year': 2023,
-            'Color': 'Updated Color',
-            'RegistrationNumber': 'Updated123',
+            'Color': 'yyyy',
+            'RegistrationNumber': 'iiisi',
             'Availability': False,
-            'DailyRate': 60.0
+            'DailyRate': 600.0
         }
-        self.vehicle_service.update_vehicle(updated_vehicle_data)
+
+        self.vehicle_service.update_vehicle(updated_vehicle_data, isTest=True)
 
         updated_vehicle_result = self.vehicle_service.get_vehicle_by_id(updated_vehicle_data['VehicleID'])
-        updated_vehicle = Vehicle(*updated_vehicle_result[0])
+        updated_vehicle = Vehicle(*updated_vehicle_result)
 
         # Check if the details have been updated correctly
-        self.assertEqual(updated_vehicle.model, 'Updated Model')
-        self.assertEqual(updated_vehicle.make, 'Updated Make')
-        self.assertEqual(updated_vehicle.year, 2023)
-        self.assertEqual(updated_vehicle.color, 'Updated Color')
-        self.assertEqual(updated_vehicle.registration_number, 'Updated123')
-        self.assertFalse(updated_vehicle.availability)
-        self.assertEqual(updated_vehicle.daily_rate, 60.0)
+        self.assertEqual(updated_vehicle.model, updated_vehicle_data['Model'])
+        self.assertEqual(updated_vehicle.make, updated_vehicle_data['Make'])
+        self.assertEqual(updated_vehicle.year, updated_vehicle_data['Year'])
+        self.assertEqual(updated_vehicle.color, updated_vehicle_data['Color'])
+        self.assertEqual(updated_vehicle.registration_number, updated_vehicle_data['RegistrationNumber'])
+        self.assertEqual(updated_vehicle.availability, 1 if updated_vehicle_data['Availability'] else 0)
+        self.assertEqual(updated_vehicle.daily_rate, updated_vehicle_data['DailyRate'])
 
 
 if __name__ == '__main__':

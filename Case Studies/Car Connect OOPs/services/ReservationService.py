@@ -56,6 +56,23 @@ class ReservationService(IReservationService):
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error creating reservation: {err}")
 
+        # Making vehicle unavailable
+        query = "INSERT INTO Reservation (CustomerID, VehicleID, StartDate, EndDate, TotalCost, Status) VALUES (%s, %s, %s, %s, %s, %s)"
+        params = (
+            reservation_data['CustomerID'],
+            reservation_data['VehicleID'],
+            reservation_data['StartDate'],
+            reservation_data['EndDate'],
+            reservation_data['TotalCost'],
+            reservation_data['Status']
+        )
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            connection.commit()
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error creating reservation: {err}")
+
     def update_reservation(self, reservation_data):
         query = "UPDATE Reservation SET StartDate = %s, EndDate = %s, TotalCost = %s, Status = %s WHERE ReservationID = %s"
         params = (

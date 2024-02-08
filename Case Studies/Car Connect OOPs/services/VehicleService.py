@@ -39,7 +39,7 @@ class VehicleService(IVehicleService):
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error getting vehicles: {err}")
 
-    def add_vehicle(self, vehicle_data):
+    def add_vehicle(self, vehicle_data, isTest=False):
         query = "INSERT INTO Vehicle (Model, Make, Year, Color, RegistrationNumber, Availability, DailyRate) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         params = (
             vehicle_data['Model'],
@@ -53,11 +53,14 @@ class VehicleService(IVehicleService):
 
         try:
             cursor, connection = self.db_context.execute_query(query, params)
-            connection.commit()
+
+            if not isTest:
+                connection.commit()
+            return cursor
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error getting vehicles: {err}")
 
-    def update_vehicle(self, vehicle_data):
+    def update_vehicle(self, vehicle_data, isTest=False):
         query = "UPDATE Vehicle SET Model = %s, Make = %s, Year = %s, Color = %s, RegistrationNumber = %s, Availability = %s, DailyRate = %s WHERE VehicleID = %s"
         params = (
             vehicle_data['Model'],
@@ -72,7 +75,9 @@ class VehicleService(IVehicleService):
 
         try:
             cursor, connection = self.db_context.execute_query(query, params)
-            connection.commit()
+
+            if not isTest:
+                connection.commit()
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error getting vehicles: {err}")
 

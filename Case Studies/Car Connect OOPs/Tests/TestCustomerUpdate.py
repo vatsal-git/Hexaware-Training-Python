@@ -6,23 +6,23 @@ from services.DatabaseContext import DatabaseContext
 
 class TestCustomerUpdate(unittest.TestCase):
     def setUp(self):
-        db_context = DatabaseContext(database="CarConnect")
-        db_context.connect()
-        self.customer_service = CustomerService(db_context)
+        self.db_context = DatabaseContext(database="CarConnect")
+        self.db_context.connect()
+        self.customer_service = CustomerService(self.db_context)
 
     def test_update_customer_info(self):
         existing_customer_id = "1"
         updated_info = {
-            'FirstName': 'newVatsal',
-            'LastName': 'newPatel',
-            'Email': 'newVatsal@gmail.com',
-            'PhoneNumber': '+91 1234567890',
+            'FirstName': 'qqqq',
+            'LastName': 'aaaa',
+            'Email': 'qqqq@gmail.com',
+            'PhoneNumber': '1234567890',
             'Address': 'new Address',
             'CustomerID': existing_customer_id
         }
 
         try:
-            self.customer_service.update_customer(updated_info)
+            self.customer_service.update_customer(updated_info, isTest=True)
 
             updated_customer = self.customer_service.get_customer_by_id(existing_customer_id)
             self.assertEqual(updated_info['FirstName'], updated_customer.first_name)
@@ -33,6 +33,9 @@ class TestCustomerUpdate(unittest.TestCase):
 
         except InvalidInputException as e:
             self.fail(f"Unexpected exception raised: {e}")
+
+        finally:
+            self.db_context.disconnect()
 
 
 if __name__ == '__main__':

@@ -64,7 +64,7 @@ class CustomerService(ICustomerService):
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error creating customer: {err}")
 
-    def update_customer(self, customer_data):
+    def update_customer(self, customer_data, isTest=False):
         self.get_customer_by_id(customer_data['CustomerID'])  # Validate if customer exists
         query = "UPDATE Customer SET FirstName = %s, LastName = %s, Email = %s, PhoneNumber = %s, Address = %s WHERE CustomerID = %s"
         params = (
@@ -75,10 +75,22 @@ class CustomerService(ICustomerService):
             customer_data['Address'],
             customer_data['CustomerID']
         )
-        self.db_context.execute_query(query, params)
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+
+            if not isTest:
+                connection.commit()
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error updating customer: {err}")
 
     def delete_customer(self, customer_id):
         self.get_customer_by_id(customer_id)  # Validate if customer exists
         query = "DELETE FROM Customer WHERE CustomerID = %s"
         params = (customer_id,)
-        self.db_context.execute_query(query, params)
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            connection.commit()
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error deleting customer: {err}")

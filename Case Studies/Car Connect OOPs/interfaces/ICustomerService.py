@@ -15,7 +15,7 @@ class ICustomerService(ABC):
         pass
 
     @abstractmethod
-    def update_customer(self, customer_data):
+    def update_customer(self, customer_data, isTest):
         pass
 
     @abstractmethod

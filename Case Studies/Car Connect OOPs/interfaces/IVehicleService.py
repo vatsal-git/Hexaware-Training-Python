@@ -11,7 +11,7 @@ class IVehicleService(ABC):
         pass
 
     @abstractmethod
-    def add_vehicle(self, vehicle_data):
+    def add_vehicle(self, vehicle_data, isTest):
         pass
 
     @abstractmethod

@@ -17,7 +17,7 @@ class TestGetAllVehicles(unittest.TestCase):
                 'Make': 'Toyota',
                 'Year': 2022,
                 'Color': 'Silver',
-                'RegistrationNumber': 'XYZ123wqe9',
+                'RegistrationNumber': '1sadasd',
                 'Availability': 'y',
                 'DailyRate': 50.00,
             },
@@ -26,7 +26,7 @@ class TestGetAllVehicles(unittest.TestCase):
                 'Make': 'Honda',
                 'Year': 2023,
                 'Color': 'Blue',
-                'RegistrationNumber': 'ABC4eqw569',
+                'RegistrationNumber': '2dasdsa',
                 'Availability': 'y',
                 'DailyRate': 60.00,
             },
@@ -35,14 +35,14 @@ class TestGetAllVehicles(unittest.TestCase):
                 'Make': 'Ford',
                 'Year': 2021,
                 'Color': 'Red',
-                'RegistrationNumber': 'DEF78qwe99',
+                'RegistrationNumber': '3asdas',
                 'Availability': 'n',
                 'DailyRate': 70.00,
             },
         ]
 
         for vehicle_data in test_vehicles:
-            self.vehicle_service.add_vehicle(vehicle_data)
+            self.vehicle_service.add_vehicle(vehicle_data, isTest=True)
 
         all_vehicles = self.vehicle_service.get_all_vehicles()
         self.assertGreaterEqual(len(all_vehicles), len(test_vehicles))

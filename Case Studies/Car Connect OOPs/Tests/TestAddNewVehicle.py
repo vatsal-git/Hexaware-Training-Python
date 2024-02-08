@@ -7,28 +7,27 @@ from services.DatabaseContext import DatabaseContext
 
 class TestAddNewVehicle(unittest.TestCase):
     def setUp(self):
-        self.db_context = DatabaseContext(database="CarConnect")
+        self.db_context = DatabaseContext()
         self.db_context.connect()
         self.vehicle_service = VehicleService(self.db_context)
 
     def test_add_new_vehicle(self):
         new_vehicle_data = {
-            'Model': 'r15',
+            'Model': 'r155',
             'Make': 'Yamaha',
             'Year': 2023,
             'Color': 'Black',
-            'RegistrationNumber': 'GJ05123',
+            'RegistrationNumber': '111',
             'Availability': 'y',  # y for True and n for False
             'DailyRate': 500.00,
         }
 
         try:
-            self.vehicle_service.add_vehicle(new_vehicle_data)
-            curr_cursor = self.db_context.get_current_cursor()
-            new_vehicle_id = curr_cursor.lastrowid
+            cursor = self.vehicle_service.add_vehicle(new_vehicle_data, isTest=True)
+            new_vehicle_id = cursor.lastrowid
 
             added_vehicle_result = self.vehicle_service.get_vehicle_by_id(new_vehicle_id)
-            added_vehicle = Vehicle(*added_vehicle_result[0])
+            added_vehicle = Vehicle(*added_vehicle_result)
 
             self.assertIsNotNone(added_vehicle)
             self.assertEqual(new_vehicle_data['Model'], added_vehicle.model)
@@ -41,6 +40,9 @@ class TestAddNewVehicle(unittest.TestCase):
 
         except Exception as e:
             self.fail(f"Exception raised: {e}")
+
+        finally:
+            self.db_context.disconnect()
 
 
 if __name__ == '__main__':

@@ -2,7 +2,6 @@ from datetime import datetime
 import time
 
 from exceptions.DatabaseConnectionException import DatabaseConnectionException
-from exceptions.InvalidInputException import InvalidInputException
 from services.AdminService import AdminService
 from services.AuthenticationService import AuthenticationService
 from services.CustomerService import CustomerService
@@ -104,7 +103,11 @@ class MainModule:
                 'Password': input("Enter your password: "),
                 'RegistrationDate': datetime.now()
             }
+        except Exception as ex:
+            print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
+            return
 
+        try:
             self.customer_service.register_customer(customer_data)
             print(f"\n{CMD_COLOR_BLUE}Customer registered successfully!{CMD_COLOR_DEFAULT}")
         except Exception as ex:
@@ -114,7 +117,6 @@ class MainModule:
         while True:
             print(f"\n{CMD_COLOR_YELLOW}Admin Auth Options{CMD_COLOR_DEFAULT}")
             print("1. Admin Login")
-            print("2. Admin Signup")
             print("0. Back to Auth Menu")
             choice = input_menu_choice()
 
@@ -123,9 +125,6 @@ class MainModule:
 
             elif choice == 1:
                 self.admin_login()
-
-            elif choice == 2:
-                self.admin_signup()
 
             else:
                 print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
@@ -143,24 +142,6 @@ class MainModule:
             self.isAdmin = True
 
             self.admin_menu(user_data)
-        except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
-
-    def admin_signup(self):
-        try:
-            user_data = {
-                'FirstName': input("\nEnter your first name: "),
-                'LastName': input("Enter your last name: "),
-                'Email': input("Enter your email(eg. vatsal@email.com): "),
-                'PhoneNumber': input("Enter your phone number(eg. 9998070564): "),
-                'Address': input("Enter your address: "),
-                'Username': input("Enter your username: "),
-                'Password': input("Enter your password: "),
-                'RegistrationDate': datetime.now()
-            }
-
-            self.admin_service.register_admin(user_data)
-            print(f"\n{CMD_COLOR_BLUE}Admin registered successfully!{CMD_COLOR_DEFAULT}")
         except Exception as ex:
             print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
 
@@ -236,18 +217,22 @@ class MainModule:
 
         while True:
             print(f"\n{CMD_COLOR_YELLOW}Main Menu{CMD_COLOR_DEFAULT}")
-            print("1. Vehicle Management")
-            print("2. Reporting")
-            print("3. Logout")
+            print("1. New Admin Signup")
+            print("2. Vehicle Management")
+            print("3. Reporting")
+            print("4. Logout")
             choice = input_menu_choice()
 
             if choice == 1:
-                self.vehicle_management_menu()
+                self.admin_signup()
 
             elif choice == 2:
-                self.reporting_menu()
+                self.vehicle_management_menu()
 
             elif choice == 3:
+                self.reporting_menu()
+
+            elif choice == 4:
                 self.user_data = None
                 self.isAuthenticated = False
                 self.isAdmin = True
@@ -256,11 +241,29 @@ class MainModule:
             else:
                 print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
 
+    def admin_signup(self):
+        try:
+            user_data = {
+                'FirstName': input("\nEnter your first name: "),
+                'LastName': input("Enter your last name: "),
+                'Email': input("Enter your email(eg. vatsal@email.com): "),
+                'PhoneNumber': input("Enter your phone number(eg. 9998070564): "),
+                'Address': input("Enter your address: "),
+                'Username': input("Enter your username: "),
+                'Password': input("Enter your password: "),
+                'RegistrationDate': datetime.now()
+            }
+
+            self.admin_service.register_admin(user_data)
+            print(f"\n{CMD_COLOR_BLUE}Admin registered successfully!{CMD_COLOR_DEFAULT}")
+        except Exception as ex:
+            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+
     def vehicle_management_menu(self):
         while True:
             print(f"\n{CMD_COLOR_YELLOW}Vehicle Management{CMD_COLOR_DEFAULT}")
             print("1. Create Vehicle")
-            print("2. Show Vehicle")
+            print("2. Show All Vehicles")
             print("3. Update Vehicle")
             print("4. Delete Vehicle")
             print("0. Back to Main Menu")
@@ -273,7 +276,7 @@ class MainModule:
                 self.create_vehicle()
 
             elif choice == 2:
-                self.show_vehicle()
+                self.show_vehicles()
 
             elif choice == 3:
                 self.update_vehicle()
@@ -308,7 +311,7 @@ class MainModule:
         except Exception as ex:
             print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
 
-    def show_vehicle(self):
+    def show_vehicles(self):
         try:
             available_vehicles = self.vehicle_service.get_available_vehicles()
             print("\nAvailable Vehicles:")
@@ -317,9 +320,18 @@ class MainModule:
         except Exception as ex:
             print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
 
+    def show_available_vehicles(self):
+        available_vehicles = self.vehicle_service.get_available_vehicles()
+        print("\nAvailable Vehicles:")
+        for vehicle in available_vehicles:
+            print(vehicle)
+
     def update_vehicle(self):
         print("\nUpdate Vehicle")
+
+        # Show Available Vehicles
         try:
+            self.show_available_vehicles()
             vehicle_id = int(input("Enter the Vehicle ID you want to update: "))
             existing_vehicle = self.vehicle_service.get_vehicle_by_id(vehicle_id)
         except Exception as ex:
@@ -327,7 +339,7 @@ class MainModule:
             return
 
         if existing_vehicle:
-            print("\nExisting Vehicle Details: ", existing_vehicle)
+            print("\nExisting Details of selected Vehicle: ", existing_vehicle)
 
             # Create a dictionary with updated data
             print("\nRe-enter info with updated data: ")
@@ -356,6 +368,7 @@ class MainModule:
     def delete_vehicle(self):
         print("\nDelete Vehicle")
         try:
+            self.show_vehicles()
             vehicle_id = int(input("Enter the Vehicle ID you want to delete: "))
         except Exception as ex:
             print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
