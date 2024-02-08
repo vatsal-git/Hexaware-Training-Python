@@ -4,17 +4,13 @@ from exceptions.InvalidInputException import InvalidInputException
 
 class InputValidator:
     @staticmethod
-    def validate_string(value, field_name):
-        if not value or not isinstance(value, str):
-            raise InvalidInputException(f"{field_name} must be a non-empty string.")
-
-    @staticmethod
-    def validate_number(value, field_name):
-        if not value or not isinstance(value, (int, float)):
-            raise InvalidInputException(f"{field_name} must be a number.")
-
-    @staticmethod
-    def validate_email(value, field_name):
+    def validate_email(value):
         email_regex = r'^\S+@\S+\.\S+$'
         if not value or not re.match(email_regex, value):
-            raise InvalidInputException(f"Invalid {field_name} format.")
+            raise InvalidInputException(f"Invalid Email format.")
+
+    @staticmethod
+    def validate_phone(value):
+        phone_number_regex = r'^\d{10}$'
+        if not value or not re.match(phone_number_regex, value):
+            raise InvalidInputException(f"Invalid Phone Number. It should be of 10-digit.")

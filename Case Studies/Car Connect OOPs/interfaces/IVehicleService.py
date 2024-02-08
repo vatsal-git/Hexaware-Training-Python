@@ -21,3 +21,7 @@ class IVehicleService(ABC):
     @abstractmethod
     def remove_vehicle(self, vehicle_id):
         pass
+
+    @abstractmethod
+    def get_all_vehicles(self):
+        pass

@@ -2,7 +2,7 @@ from datetime import datetime
 import mysql.connector
 
 from exceptions.CustomerNotFoundException import CustomerNotFoundException
-from exceptions.InvalidInputException import InvalidInputException
+from exceptions.DatabaseConnectionException import DatabaseConnectionException
 from interfaces.ICustomerService import ICustomerService
 from entities.Customer import Customer
 from utils.Validator import InputValidator
@@ -15,29 +15,36 @@ class CustomerService(ICustomerService):
     def get_customer_by_id(self, customer_id):
         query = "SELECT * FROM Customer WHERE CustomerID = %s"
         params = (customer_id,)
-        result = self.db_context.execute_query(query, params)
-        if result:
-            return Customer(*result[0])
-        else:
-            raise CustomerNotFoundException()
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            fetched_customer = cursor.fetchone()
+
+            if fetched_customer:
+                return Customer(*fetched_customer)
+            else:
+                return None
+        except mysql.connector.Error as err:
+            raise CustomerNotFoundException(f"Error getting customer: {err}")
 
     def get_customer_by_username(self, username):
         query = "SELECT * FROM Customer WHERE Username = %s"
         params = (username,)
-        result = self.db_context.execute_query(query, params)
-        if result:
-            return Customer(*result[0])
-        else:
-            raise CustomerNotFoundException()
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            fetched_customer = cursor.fetchone()
+
+            if fetched_customer:
+                return Customer(*fetched_customer)
+            else:
+                return None
+        except mysql.connector.Error as err:
+            raise CustomerNotFoundException(f"Error getting customer: {err}")
 
     def register_customer(self, customer_data):
-        InputValidator.validate_string(customer_data['FirstName'], "First Name")
-        InputValidator.validate_string(customer_data['LastName'], "Last Name")
-        InputValidator.validate_email(customer_data['Email'], "Email")
-        InputValidator.validate_string(customer_data['PhoneNumber'], "Phone Number")
-        InputValidator.validate_string(customer_data['Address'], "Address")
-        InputValidator.validate_string(customer_data['Username'], "Username")
-        InputValidator.validate_string(customer_data['Password'], "Password")
+        InputValidator.validate_email(customer_data['Email'])
+        InputValidator.validate_phone(customer_data['PhoneNumber'])
 
         query = "INSERT INTO Customer (FirstName, LastName, Email, PhoneNumber, Address, Username, Password, RegistrationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         params = (
@@ -52,10 +59,10 @@ class CustomerService(ICustomerService):
         )
 
         try:
-            self.db_context.execute_query(query, params)
-
+            cursor, connection = self.db_context.execute_query(query, params)
+            connection.commit()
         except mysql.connector.Error as err:
-            raise InvalidInputException(f"Error creating order: {err}")
+            raise DatabaseConnectionException(f"Error creating customer: {err}")
 
     def update_customer(self, customer_data):
         self.get_customer_by_id(customer_data['CustomerID'])  # Validate if customer exists

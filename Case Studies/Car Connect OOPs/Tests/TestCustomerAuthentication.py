@@ -7,7 +7,7 @@ from services.DatabaseContext import DatabaseContext
 
 class TestCustomerAuthentication(unittest.TestCase):
     def setUp(self):
-        db_context = DatabaseContext(database="CarConnect")
+        db_context = DatabaseContext()
         db_context.connect()
         self.customer_service = CustomerService(db_context)
         self.auth_service = AuthenticationService(self.customer_service)
@@ -17,10 +17,7 @@ class TestCustomerAuthentication(unittest.TestCase):
         invalid_password = "notroot"
 
         with self.assertRaises(AuthenticationException) as context:
-            try:
-                self.auth_service.authenticate_customer(invalid_username, invalid_password)
-            except Exception as ex:
-                print("Invalid Creds Exception: ", ex)
+            self.auth_service.authenticate_customer(invalid_username, invalid_password)
         self.assertIn("Incorrect Username or Password", str(context.exception))
 
     def test_valid_credentials(self):

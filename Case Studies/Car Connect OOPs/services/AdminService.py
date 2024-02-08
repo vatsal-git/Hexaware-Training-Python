@@ -1,7 +1,11 @@
+from datetime import datetime
+import mysql.connector
+
 from exceptions.AdminNotFoundException import AdminNotFoundException
+from exceptions.DatabaseConnectionException import DatabaseConnectionException
 from interfaces.IAdminService import IAdminService
 from entities.Admin import Admin
-from datetime import datetime
+from utils.Validator import InputValidator
 
 
 class AdminService(IAdminService):
@@ -11,22 +15,37 @@ class AdminService(IAdminService):
     def get_admin_by_id(self, admin_id):
         query = "SELECT * FROM Admin WHERE AdminID = %s"
         params = (admin_id,)
-        result = self.db_context.execute_query(query, params)
-        if result:
-            return Admin(**result[0])
-        else:
-            raise AdminNotFoundException()
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            fetched_admin = cursor.fetchone()
+
+            if fetched_admin:
+                return Admin(*fetched_admin)
+            else:
+                return None
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error getting admin: {err}")
 
     def get_admin_by_username(self, username):
         query = "SELECT * FROM Admin WHERE Username = %s"
         params = (username,)
-        result = self.db_context.execute_query(query, params)
-        if result:
-            return Admin(*result[0])
-        else:
-            raise AdminNotFoundException()
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            fetched_admin = cursor.fetchone()
+
+            if fetched_admin:
+                return Admin(*fetched_admin)
+            else:
+                return None
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error getting admin: {err}")
 
     def register_admin(self, admin_data):
+        InputValidator.validate_email(admin_data['Email'])
+        InputValidator.validate_phone(admin_data['PhoneNumber'])
+
         query = "INSERT INTO Admin (FirstName, LastName, Email, PhoneNumber, Username, Password, Role, JoinDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         params = (
             admin_data['FirstName'],
@@ -38,7 +57,12 @@ class AdminService(IAdminService):
             'Admin',
             datetime.now()
         )
-        self.db_context.execute_query(query, params)
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            connection.commit()
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error creating admin: {err}")
 
     def update_admin(self, admin_data):
         self.get_admin_by_id(admin_data['AdminID'])  # Validate if admin exists

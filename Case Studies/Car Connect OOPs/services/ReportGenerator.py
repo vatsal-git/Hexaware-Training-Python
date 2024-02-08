@@ -1,3 +1,9 @@
+import mysql.connector
+
+from exceptions.DatabaseConnectionException import DatabaseConnectionException
+from exceptions.ReservationException import ReservationException
+
+
 class ReportGenerator:
     def __init__(self, db_context, reservation_service=None, vehicle_service=None):
         self.reservation_service = reservation_service
@@ -19,11 +25,16 @@ class ReportGenerator:
         return "Vehicle not found."
 
     def view_overall_revenue(self):
-        query = "SELECT SUM(TotalCost) AS OverallRevenue FROM Reservation"
-        result = self.db_context.execute_query(query)
+        query = "SELECT SUM(TotalCost) AS OverallRevenue FROM Reservation WHERE Status = 'completed'"
 
-        if result:
-            overall_revenue = result[0]['OverallRevenue']
-            print(f"Overall Revenue: ${overall_revenue:.2f}")
-        else:
-            print("No revenue data available.")
+        try:
+            cursor, connection = self.db_context.execute_query(query)
+            fetched_overall_revenue = cursor.fetchone()
+
+            if fetched_overall_revenue:
+                overall_revenue = fetched_overall_revenue[0]
+                return overall_revenue if overall_revenue else 0
+            else:
+                raise ReservationException(f"No Revenue found.")
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error getting revenue: {err}")

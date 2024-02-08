@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class IReservationService(ABC):
     @abstractmethod
     def get_reservation_by_id(self, reservation_id):
@@ -20,4 +19,12 @@ class IReservationService(ABC):
 
     @abstractmethod
     def cancel_reservation(self, reservation_id):
+        pass
+
+    @abstractmethod
+    def get_reservation_history(self, vehicle_id):
+        pass
+
+    @abstractmethod
+    def get_utilization_for_vehicle(self, vehicle_id):
         pass
