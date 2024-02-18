@@ -9,7 +9,6 @@ class Vehicle:
         self.__Availability = availability
         self.__DailyRate = daily_rate
 
-    # Getter methods with @property decorator
     @property
     def vehicle_id(self):
         return self.__VehicleID
@@ -42,7 +41,6 @@ class Vehicle:
     def daily_rate(self):
         return self.__DailyRate
 
-    # Setter methods with @<property_name>.setter decorator
     @vehicle_id.setter
     def vehicle_id(self, vehicle_id):
         self.__VehicleID = vehicle_id
@@ -74,3 +72,11 @@ class Vehicle:
     @daily_rate.setter
     def daily_rate(self, daily_rate):
         self.__DailyRate = daily_rate
+
+    def show_details(self):
+        print(f"Vehicle ID: {self.vehicle_id}")
+        print(f"{self.year} {self.make} {self.model}")
+        print(f"Color: {self.color}")
+        print(f"Registration Number: {self.registration_number}")
+        print(f"Availability: {'Available' if self.availability else 'Not Available'}")
+        print(f"Daily Rate: ${self.daily_rate:.2f}")

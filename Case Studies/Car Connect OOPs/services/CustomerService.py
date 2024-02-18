@@ -45,6 +45,7 @@ class CustomerService(ICustomerService):
     def register_customer(self, customer_data):
         InputValidator.validate_email(customer_data['Email'])
         InputValidator.validate_phone(customer_data['PhoneNumber'])
+        InputValidator.validate_username(customer_data['Username'])
 
         query = "INSERT INTO Customer (FirstName, LastName, Email, PhoneNumber, Address, Username, Password, RegistrationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         params = (

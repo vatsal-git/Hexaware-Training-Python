@@ -87,3 +87,10 @@ class Customer:
 
     def authenticate(self, password):
         return self.__Password == password
+
+    def show_details(self):
+        print(f"Customer ID: {self.customer_id} | Username: {self.username}")
+        print(f"Name: {self.first_name} {self.last_name}")
+        print(f"Email: {self.email} | Phone Number: {self.phone_number}")
+        print(f"Address: {self.address}")
+        print(f"Registration Date: {self.registration_date}")

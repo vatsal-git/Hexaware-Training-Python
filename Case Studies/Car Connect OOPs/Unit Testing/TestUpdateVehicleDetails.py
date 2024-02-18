@@ -25,8 +25,7 @@ class TestUpdateVehicleDetails(unittest.TestCase):
 
         self.vehicle_service.update_vehicle(updated_vehicle_data, isTest=True)
 
-        updated_vehicle_result = self.vehicle_service.get_vehicle_by_id(updated_vehicle_data['VehicleID'])
-        updated_vehicle = Vehicle(*updated_vehicle_result)
+        updated_vehicle = self.vehicle_service.get_vehicle_by_id(updated_vehicle_data['VehicleID'])
 
         # Check if the details have been updated correctly
         self.assertEqual(updated_vehicle.model, updated_vehicle_data['Model'])

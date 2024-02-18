@@ -56,4 +56,5 @@ class DatabaseContext(IDatabaseContext):
                 self.cursor.execute(query)
             return self.cursor, self.connection
         except mysql.connector.Error as e:
+            self.connection.rollback()
             raise DatabaseConnectionException(f"Error executing query: {e}")

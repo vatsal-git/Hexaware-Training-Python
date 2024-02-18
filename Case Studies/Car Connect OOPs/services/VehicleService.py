@@ -19,7 +19,7 @@ class VehicleService(IVehicleService):
             fetched_vehicle = cursor.fetchone()
 
             if fetched_vehicle:
-                return [*fetched_vehicle]
+                return Vehicle(*fetched_vehicle)
             else:
                 raise VehicleNotFoundException(f"Vehicle with ID {vehicle_id} not found.")
         except mysql.connector.Error as err:
@@ -33,11 +33,11 @@ class VehicleService(IVehicleService):
             fetched_vehicles = cursor.fetchall()
 
             if fetched_vehicles and len(fetched_vehicles) > 0:
-                return [[*item] for item in fetched_vehicles]
+                return [Vehicle(*item) for item in fetched_vehicles]
             else:
                 raise VehicleNotFoundException(f"No Vehicles Available.")
         except mysql.connector.Error as err:
-            raise DatabaseConnectionException(f"Error getting vehicles: {err}")
+            raise DatabaseConnectionException(f"Error getting available vehicles: {err}")
 
     def add_vehicle(self, vehicle_data, isTest=False):
         query = "INSERT INTO Vehicle (Model, Make, Year, Color, RegistrationNumber, Availability, DailyRate) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -47,7 +47,7 @@ class VehicleService(IVehicleService):
             vehicle_data['Year'],
             vehicle_data['Color'],
             vehicle_data['RegistrationNumber'],
-            1 if vehicle_data['Availability'] == 'y' else 0,
+            1,
             vehicle_data['DailyRate']
         )
 
@@ -58,7 +58,7 @@ class VehicleService(IVehicleService):
                 connection.commit()
             return cursor
         except mysql.connector.Error as err:
-            raise DatabaseConnectionException(f"Error getting vehicles: {err}")
+            raise DatabaseConnectionException(f"Error adding vehicle: {err}")
 
     def update_vehicle(self, vehicle_data, isTest=False):
         query = "UPDATE Vehicle SET Model = %s, Make = %s, Year = %s, Color = %s, RegistrationNumber = %s, Availability = %s, DailyRate = %s WHERE VehicleID = %s"
@@ -79,7 +79,7 @@ class VehicleService(IVehicleService):
             if not isTest:
                 connection.commit()
         except mysql.connector.Error as err:
-            raise DatabaseConnectionException(f"Error getting vehicles: {err}")
+            raise DatabaseConnectionException(f"Error updating vehicle: {err}")
 
     def remove_vehicle(self, vehicle_id):
         # Delete associated reservations
@@ -92,6 +92,7 @@ class VehicleService(IVehicleService):
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error deleting associated reservations: {err}")
 
+        # Delete vehicle
         query = "DELETE FROM Vehicle WHERE VehicleID = %s"
         params = (vehicle_id,)
 
@@ -99,7 +100,7 @@ class VehicleService(IVehicleService):
             cursor, connection = self.db_context.execute_query(query, params)
             connection.commit()
         except mysql.connector.Error as err:
-            raise DatabaseConnectionException(f"Error getting vehicles: {err}")
+            raise DatabaseConnectionException(f"Error deleting vehicle: {err}")
 
     def get_all_vehicles(self):
         query = "SELECT * FROM Vehicle"
@@ -109,7 +110,7 @@ class VehicleService(IVehicleService):
             fetched_vehicles = cursor.fetchall()
 
             if fetched_vehicles:
-                return [[*item] for item in fetched_vehicles]
+                return [Vehicle(*item) for item in fetched_vehicles]
             else:
                 raise VehicleNotFoundException(f"No Vehicles Found.")
         except mysql.connector.Error as err:

@@ -45,8 +45,7 @@ class TestGetAvailableVehicles(unittest.TestCase):
         for vehicle_data in test_vehicles:
             self.vehicle_service.add_vehicle(vehicle_data, isTest=True)
 
-        available_vehicles_result = self.vehicle_service.get_available_vehicles()
-        available_vehicles = [Vehicle(*available_vehicle_result) for available_vehicle_result in available_vehicles_result]
+        available_vehicles = self.vehicle_service.get_available_vehicles()
         for vehicle in available_vehicles:
             self.assertEqual(vehicle.availability,  1)
 

@@ -1,20 +1,21 @@
 from exceptions.AuthenticationException import AuthenticationException
 from interfaces.IAuthenticationService import IAuthenticationService
+from services.AdminService import AdminService
+from services.CustomerService import CustomerService
 
 
-class AuthenticationService(IAuthenticationService):
-    def __init__(self, customer_service=None, admin_service=None):
-        self.customer_service = customer_service
-        self.admin_service = admin_service
+class AuthenticationService(IAuthenticationService, CustomerService, AdminService):
+    def __init__(self, db_context):
+        super().__init__(db_context)
 
     def authenticate_customer(self, username, password):
-        customer = self.customer_service.get_customer_by_username(username)
+        customer = self.get_customer_by_username(username)
         if not customer or not customer.authenticate(password):
             raise AuthenticationException("Incorrect Username or Password")
         return customer
 
     def authenticate_admin(self, username, password):
-        admin = self.admin_service.get_admin_by_username(username)
+        admin = self.get_admin_by_username(username)
         if not admin or not admin.authenticate(password):
             raise AuthenticationException("Incorrect Username or Password")
         return admin

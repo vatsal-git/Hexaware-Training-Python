@@ -10,7 +10,7 @@ class TestCustomerAuthentication(unittest.TestCase):
         self.db_context = DatabaseContext()
         self.db_context.connect()
         self.customer_service = CustomerService(self.db_context)
-        self.auth_service = AuthenticationService(self.customer_service)
+        self.auth_service = AuthenticationService(self.db_context)
 
     def test_invalid_credentials(self):
         invalid_username = "notvatsal"

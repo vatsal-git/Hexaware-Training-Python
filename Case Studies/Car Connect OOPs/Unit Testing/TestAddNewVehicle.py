@@ -26,8 +26,7 @@ class TestAddNewVehicle(unittest.TestCase):
             cursor = self.vehicle_service.add_vehicle(new_vehicle_data, isTest=True)
             new_vehicle_id = cursor.lastrowid
 
-            added_vehicle_result = self.vehicle_service.get_vehicle_by_id(new_vehicle_id)
-            added_vehicle = Vehicle(*added_vehicle_result)
+            added_vehicle = self.vehicle_service.get_vehicle_by_id(new_vehicle_id)
 
             self.assertIsNotNone(added_vehicle)
             self.assertEqual(new_vehicle_data['Model'], added_vehicle.model)

@@ -86,3 +86,10 @@ class Admin:
 
     def authenticate(self, password):
         return self.__Password == password
+
+    def show_details(self):
+        print(f"Admin ID: {self.admin_id} | Username: {self.username}")
+        print(f"Name: {self.first_name} {self.last_name}")
+        print(f"Email: {self.email} | Phone Number: {self.phone_number}")
+        print(f"Role: {self.role}")
+        print(f"Join Date: {self.join_date}")

@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
+from prettytable import PrettyTable
 
 from exceptions.DatabaseConnectionException import DatabaseConnectionException
+from exceptions.InvalidInputException import InvalidInputException
 from services.AdminService import AdminService
 from services.AuthenticationService import AuthenticationService
 from services.CustomerService import CustomerService
@@ -9,26 +11,29 @@ from services.DatabaseContext import DatabaseContext
 from services.ReportGenerator import ReportGenerator
 from services.ReservationService import ReservationService
 from services.VehicleService import VehicleService
-from utils.Constants import CMD_COLOR_YELLOW, CMD_COLOR_DEFAULT, CMD_COLOR_BLUE, CMD_COLOR_RED
 from utils.Validator import InputValidator
-
-from utils.helper_functions import input_menu_choice
+from utils.HelperFunctions import input_menu_choice, print_error, print_title, print_info, print_welcome
 
 
 class MainModule:
     def __init__(self, new_db_context, user_data=None):
+        self.input_validator = InputValidator()
+
+        # Auth Setup
         self.isAuthenticated = False
         self.isAdmin = False
         self.user_data = user_data
+
+        # Services setup
         self.customer_service = CustomerService(new_db_context)
         self.admin_service = AdminService(new_db_context)
         self.vehicle_service = VehicleService(new_db_context)
         self.reservation_service = ReservationService(new_db_context)
-        self.auth_service = AuthenticationService(self.customer_service, self.admin_service)
-        self.input_validator = InputValidator()
+        self.auth_service = AuthenticationService(new_db_context)
         self.report_generator = ReportGenerator(new_db_context)
 
     def main_menu(self):
+        print_welcome()
         if not self.isAuthenticated:
             self.auth_menu()
         elif self.isAuthenticated and not self.isAdmin and self.user_data:
@@ -38,7 +43,7 @@ class MainModule:
 
     def auth_menu(self):
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}Auth Menu{CMD_COLOR_DEFAULT}")
+            print_title("\nAuth Menu")
             print("1. User Auth Options")
             print("2. Admin Auth Options")
             print("0. Exit")
@@ -54,11 +59,11 @@ class MainModule:
                 self.admin_auth_menu()
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def user_auth_menu(self):
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}User Auth Options{CMD_COLOR_DEFAULT}")
+            print_title("\nUser Auth Options")
             print("1. User Login")
             print("2. User Signup")
             print("0. Back to Auth Menu")
@@ -74,22 +79,25 @@ class MainModule:
                 self.user_signup()
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def user_login(self):
         try:
             username = input("\nEnter your username: ")
             password = input("Enter your password: ")
             user_data = self.auth_service.authenticate_customer(username, password)
-            print(f"\n{CMD_COLOR_BLUE}Logged In Successfully!{CMD_COLOR_DEFAULT}")
+
+            print_info("\nLogged In Successfully!")
+            user_data.show_details()
 
             # Setting auth
             self.user_data = user_data
             self.isAuthenticated = True
 
+            # Route to Main Menu
             self.user_menu(user_data)
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\n{ex}")
 
     def user_signup(self):
         try:
@@ -104,18 +112,18 @@ class MainModule:
                 'RegistrationDate': datetime.now()
             }
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\nInvalid Input: {ex}")
             return
 
         try:
             self.customer_service.register_customer(customer_data)
-            print(f"\n{CMD_COLOR_BLUE}Customer registered successfully!{CMD_COLOR_DEFAULT}")
+            print_info("\nCustomer registered successfully!")
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\n{ex}")
 
     def admin_auth_menu(self):
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}Admin Auth Options{CMD_COLOR_DEFAULT}")
+            print_title("\nAdmin Auth Options")
             print("1. Admin Login")
             print("0. Back to Auth Menu")
             choice = input_menu_choice()
@@ -127,96 +135,140 @@ class MainModule:
                 self.admin_login()
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def admin_login(self):
         try:
             username = input("\nEnter your username: ")
             password = input("Enter your password: ")
             user_data = self.auth_service.authenticate_admin(username, password)
-            print(f"\n{CMD_COLOR_BLUE}Logged In Successfully!{CMD_COLOR_DEFAULT}")
+
+            print_info("\nLogged In Successfully!")
+            user_data.show_details()
 
             # Setting auth
             self.user_data = user_data
             self.isAuthenticated = True
             self.isAdmin = True
 
+            # Route to Main Menu
             self.admin_menu(user_data)
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\n{ex}")
 
     def user_menu(self, user_data=None):
         if user_data is None:
             return
 
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}Main Menu{CMD_COLOR_DEFAULT}")
+            print_title(f"\nMain Menu")
             print("1. Reserve a Vehicle")
-            print("2. Logout")
+            print("2. Your existing Reservations")
+            print("3. Logout")
             choice = input_menu_choice()
 
             if choice == 1:
                 self.reserve_vehicle(user_data.customer_id)
 
             elif choice == 2:
+                self.existing_reservations(user_data.customer_id)
+
+            elif choice == 3:
                 self.user_data = None
                 self.isAuthenticated = False
                 break
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def reserve_vehicle(self, user_id):
-        available_vehicles = self.vehicle_service.get_available_vehicles()
-
-        if not len(available_vehicles):
-            print("\nNo vehicles available to rent! Sorry!")
-            return
-
-        vehicle_indexes_list = [i[0] for i in available_vehicles]
-
         while True:
-            print("\nAvailable Vehicles:")
-            for idx, vehicle in enumerate(available_vehicles, start=1):
-                print(f"VehicleID: {vehicle[0]} \n{vehicle}\n")
+            print_title("\nAvailable Vehicles:")
+            try:
+                available_vehicles = self.show_available_vehicles()
+                vehicle_indexes_list = [i.vehicle_id for i in available_vehicles]
+            except Exception as ex:
+                print_error(f"\n{ex}")
+                break
             print("0. Cancel")
 
-            selected_vehicle_index = input_menu_choice("\nEnter a VehicleID to reserve (or 0 to Cancel): ")
+            selected_vehicle_id = input_menu_choice("\nEnter a VehicleID to reserve (or 0 to Cancel): ")
 
-            if selected_vehicle_index == 0:
+            if selected_vehicle_id == 0:
                 break
 
-            elif selected_vehicle_index in vehicle_indexes_list:
-                selected_vehicle = next(item for item in available_vehicles if item[0] == selected_vehicle_index)
+            elif selected_vehicle_id in vehicle_indexes_list:
+                selected_vehicle = next(item for item in available_vehicles if item.vehicle_id == selected_vehicle_id)
 
-                print("\nSelected: ", selected_vehicle)
+                print_info(f"\nSelected Vehicle:")
+                selected_vehicle.show_details()
+
+                start_date_str = input("\nEnter start date and time(eg. YYYY-MM-DD HH:MI:SS): ")
+                end_date_str = input("Enter end date and time(eg. YYYY-MM-DD HH:MI:SS): ")
+
+                try:
+                    start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")
+                    end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S")
+
+                    if start_date < datetime.now():
+                        raise InvalidInputException("Start date should be greater than or equal to the current date and time")
+
+                    if end_date <= start_date + timedelta(days=1):
+                        raise InvalidInputException("Booking should be for at least 1 day")
+
+                    num_days = (end_date - start_date).days
+                    if num_days < 1:
+                        raise InvalidInputException("Booking should be of at least 1 day")
+
+                    total_cost = selected_vehicle.daily_rate * num_days
+                except Exception as ex:
+                    print_error(f"\nInvalid Input: {ex}")
+                    return
 
                 reservation_data = {
                     'CustomerID': user_id,
-                    'VehicleID': selected_vehicle[0],
-                    'StartDate': input("Enter start date and time(eg. YYYY-MM-DD HH:MI:SS): "),
-                    'EndDate': input("Enter end date and time(eg. YYYY-MM-DD HH:MI:SS): "),
-                    'TotalCost': selected_vehicle[7],
+                    'VehicleID': selected_vehicle.vehicle_id,
+                    'StartDate': start_date_str,
+                    'EndDate': end_date_str,
+                    'TotalCost': total_cost,
                     'Status': 'pending'
                 }
 
                 try:
                     self.reservation_service.create_reservation(reservation_data)
-                    print(f"\n{CMD_COLOR_BLUE}Reservation successful!{CMD_COLOR_DEFAULT}")
-                    break
+                    print_info(f"\nReservation successful!")
+                    return
                 except Exception as ex:
-                    print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+                    print_error(f"\n{ex}")
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
-                print("Showing list again, wait...")
-                time.sleep(2)
+                print_error("Invalid choice. Please enter a valid option.")
+                if len(available_vehicles) > 15:  # Users will not see the error if the list is long
+                    countdown = 3
+                    while countdown > 0:
+                        print(f"Showing list again in {countdown}...")
+                        time.sleep(1)
+                        countdown -= 1
+
+    def existing_reservations(self, user_id):
+        reservations = self.reservation_service.get_reservations_by_customer_id(user_id)
+
+        print_info(f"\nMy Reservation: ")
+        table = PrettyTable()
+        table.field_names = ["ReservationID", "Model", "Make", "Color", "RegistrationNumber",
+                             "Duration", "TotalCost"]
+        for reservation in reservations:
+            row = []
+            for i in reservation:
+                row.append(i)
+            table.add_row(row)
+        print(table)
 
     def admin_menu(self, admin_data=None):
         if admin_data is None:
             return
 
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}Main Menu{CMD_COLOR_DEFAULT}")
+            print_title("\nMain Menu")
             print("1. New Admin Signup")
             print("2. Vehicle Management")
             print("3. Reporting")
@@ -239,7 +291,7 @@ class MainModule:
                 break
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def admin_signup(self):
         try:
@@ -249,19 +301,19 @@ class MainModule:
                 'Email': input("Enter your email(eg. vatsal@email.com): "),
                 'PhoneNumber': input("Enter your phone number(eg. 9998070564): "),
                 'Address': input("Enter your address: "),
-                'Username': input("Enter your username: "),
+                'Username': input("Enter your username: ").strip(),
                 'Password': input("Enter your password: "),
                 'RegistrationDate': datetime.now()
             }
 
             self.admin_service.register_admin(user_data)
-            print(f"\n{CMD_COLOR_BLUE}Admin registered successfully!{CMD_COLOR_DEFAULT}")
+            print_info(f"\nAdmin registered successfully!")
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\n{ex}")
 
     def vehicle_management_menu(self):
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}Vehicle Management{CMD_COLOR_DEFAULT}")
+            print_title("\nVehicle Management")
             print("1. Create Vehicle")
             print("2. Show All Vehicles")
             print("3. Update Vehicle")
@@ -276,7 +328,10 @@ class MainModule:
                 self.create_vehicle()
 
             elif choice == 2:
-                self.show_vehicles()
+                try:
+                    self.show_vehicles()
+                except Exception as ex:
+                    print_error(f"\n{ex}")
 
             elif choice == 3:
                 self.update_vehicle()
@@ -285,10 +340,10 @@ class MainModule:
                 self.delete_vehicle()
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def create_vehicle(self):
-        print("\nCreate Vehicle")
+        print_title("\nCreate Vehicle")
 
         try:
             vehicle_data = {
@@ -297,92 +352,141 @@ class MainModule:
                 'Year': int(input("Enter the manufacturing year(eg. 2024): ")),
                 'Color': input("Enter the vehicle color: "),
                 'RegistrationNumber':  input("Enter the registration number(eg. GJ059062): "),
-                'Availability': input("Is the vehicle available? (y/n): "),
                 'DailyRate': float(input("Enter the daily rental rate: "))
             }
-
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\nInvalid Input: {ex}")
             return
 
         try:
             self.vehicle_service.add_vehicle(vehicle_data)
-            print(f"\n{CMD_COLOR_BLUE}Vehicle created successfully!{CMD_COLOR_DEFAULT}")
+            print_info(f"\nVehicle created successfully!")
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\n{ex}")
 
     def show_vehicles(self):
         try:
-            available_vehicles = self.vehicle_service.get_available_vehicles()
-            print("\nAvailable Vehicles:")
-            for vehicle in available_vehicles:
-                print(vehicle)
+            print_title("\nAll Vehicles:")
+            vehicles = self.vehicle_service.get_all_vehicles()
+            table = PrettyTable()
+            table.field_names = ["VehicleID", "Model", "Make", "Year", "Color", "RegistrationNumber", "Availability", "DailyRate"]
+            for vehicle in vehicles:
+                table.add_row([vehicle.vehicle_id, vehicle.model, vehicle.make, vehicle.year, vehicle.color, vehicle.registration_number, vehicle.availability, f"{vehicle.daily_rate:.2f}"])
+            print(table)
+            return vehicles
         except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            print_error(f"\n{ex}")
 
     def show_available_vehicles(self):
-        available_vehicles = self.vehicle_service.get_available_vehicles()
-        print("\nAvailable Vehicles:")
-        for vehicle in available_vehicles:
-            print(vehicle)
+        try:
+            available_vehicles = self.vehicle_service.get_available_vehicles()
+            table = PrettyTable()
+            table.field_names = ["VehicleID", "Model", "Make", "Year", "Color", "RegistrationNumber", "DailyRate"]
+            for vehicle in available_vehicles:
+                table.add_row([vehicle.vehicle_id, vehicle.model, vehicle.make, vehicle.year, vehicle.color, vehicle.registration_number, f"{vehicle.daily_rate:.2f}"])
+            print(table)
+            return available_vehicles
+        except Exception as ex:
+            print_error(f"\n{ex}")
 
     def update_vehicle(self):
-        print("\nUpdate Vehicle")
-
-        # Show Available Vehicles
-        try:
-            self.show_available_vehicles()
-            vehicle_id = int(input("Enter the Vehicle ID you want to update: "))
-            existing_vehicle = self.vehicle_service.get_vehicle_by_id(vehicle_id)
-        except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}Invalid VehicleID: {ex}{CMD_COLOR_DEFAULT}")
-            return
-
-        if existing_vehicle:
-            print("\nExisting Details of selected Vehicle: ", existing_vehicle)
-
-            # Create a dictionary with updated data
-            print("\nRe-enter info with updated data: ")
-
+        while True:
+            print_title("\nAvailable Vehicles:")
             try:
-                updated_vehicle_data = {
-                    'VehicleID': vehicle_id,
-                    'Model': input("Enter updated model: "),
-                    'Make': input("Enter updated make: "),
-                    'Year': int(input("Enter updated year: ")),
-                    'Color': input("Enter updated color: "),
-                    'RegistrationNumber': input("Enter updated registration number: "),
-                    'DailyRate': float(input("Enter updated daily rate: ")),
-                    'Availability': existing_vehicle[6]
-                }
+                vehicles = self.show_vehicles()
+                vehicle_indexes_list = [i.vehicle_id for i in vehicles]
             except Exception as ex:
-                print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
-                return
+                print_error(f"\n{ex}")
+                break
+            print("0. Cancel")
 
-            try:
-                self.vehicle_service.update_vehicle(updated_vehicle_data)
-                print(f"\n{CMD_COLOR_BLUE}Vehicle updated successfully!{CMD_COLOR_DEFAULT}")
-            except Exception as ex:
-                print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            selected_vehicle_id = input_menu_choice("\nEnter a VehicleID to update (or 0 to Cancel): ")
+
+            if selected_vehicle_id == 0:
+                break
+
+            elif selected_vehicle_id in vehicle_indexes_list:
+                try:
+                    existing_vehicle = self.vehicle_service.get_vehicle_by_id(selected_vehicle_id)
+                except Exception as ex:
+                    print_error(f"\n{ex}")
+                    return
+
+                print_info(f"\nExisting Details of selected Vehicle:")
+                existing_vehicle.show_details()
+
+                # Create a dictionary with updated data
+                print("\nRe-enter info with updated data: ")
+                try:
+                    updated_vehicle_data = {
+                        'VehicleID': selected_vehicle_id,
+                        'Model': input("Enter updated model: ") or existing_vehicle.model,
+                        'Make': input("Enter updated make: ") or existing_vehicle.make,
+                        'Year': int(input("Enter updated year: ")) if input("Update year? (y/n): ").upper() == 'y' else
+                        existing_vehicle.year,
+                        'Color': input("Enter updated color: ") or existing_vehicle.color,
+                        'RegistrationNumber': input("Enter updated registration number: ") or existing_vehicle.registration_number,
+                        'DailyRate': float(input("Enter updated daily rate: ")) if input(
+                            "Update daily rate? (Y/N): ").upper() == 'Y' else existing_vehicle.daily_rate,
+                        'Availability': input("Enter Availability: ") or existing_vehicle.availability
+                    }
+
+                except Exception as ex:
+                    print_error(f"\nInvalid Input: {ex}")
+                    return
+
+                try:
+                    self.vehicle_service.update_vehicle(updated_vehicle_data)
+                    print_info(f"\nVehicle updated successfully!")
+                    return
+                except Exception as ex:
+                    print_error(f"\n{ex}")
+
+            else:
+                print_error("Invalid choice. Please enter a valid option.")
+                if len(vehicles) > 15:  # Users will not see the error if the list is long
+                    countdown = 3
+                    while countdown > 0:
+                        print(f"Showing list again in {countdown}...")
+                        time.sleep(1)
+                        countdown -= 1
 
     def delete_vehicle(self):
-        print("\nDelete Vehicle")
-        try:
-            self.show_vehicles()
-            vehicle_id = int(input("Enter the Vehicle ID you want to delete: "))
-        except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
-            return
+        while True:
+            print_title("\nAvailable Vehicles:")
+            try:
+                vehicles = self.show_vehicles()
+                vehicle_indexes_list = [i.vehicle_id for i in vehicles]
+            except Exception as ex:
+                print_error(f"\n{ex}")
+                break
+            print("0. Cancel")
 
-        try:
-            self.vehicle_service.remove_vehicle(vehicle_id)
-            print(f"\n{CMD_COLOR_BLUE}Vehicle with ID {vehicle_id} deleted successfully.{CMD_COLOR_DEFAULT}")
-        except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+            selected_vehicle_id = input_menu_choice("\nEnter a VehicleID to delete (or 0 to Cancel): ")
+
+            if selected_vehicle_id == 0:
+                break
+
+            elif selected_vehicle_id in vehicle_indexes_list:
+                try:
+                    self.vehicle_service.remove_vehicle(selected_vehicle_id)
+                    print_info(f"\nVehicle with ID {selected_vehicle_id} deleted successfully.")
+                    break
+                except Exception as ex:
+                    print_error(f"\n{ex}")
+
+            else:
+                print_error("Invalid choice. Please enter a valid option.")
+                if len(vehicles) > 15:  # Users will not see the error if the list is long
+                    countdown = 3
+                    while countdown > 0:
+                        print(f"Showing list again in {countdown}...")
+                        time.sleep(1)
+                        countdown -= 1
 
     def reporting_menu(self):
         while True:
-            print(f"\n{CMD_COLOR_YELLOW}Reporting{CMD_COLOR_DEFAULT}")
+            print_title(f"\nReporting")
             print("1. See Reservation History for a Vehicle")
             print("2. See Vehicle Utilization")
             print("3. See Revenue")
@@ -399,40 +503,95 @@ class MainModule:
                 self.see_vehicle_utilization()
 
             elif choice == 3:
-                try:
-                    revenue = self.report_generator.view_overall_revenue()
-                    print(f"\n{CMD_COLOR_BLUE}Overall revenue: {revenue}$.{CMD_COLOR_DEFAULT}")
-                except Exception as ex:
-                    print(f"\n{CMD_COLOR_RED}{ex}{CMD_COLOR_DEFAULT}")
+                self.see_revenue()
 
             else:
-                print(f"{CMD_COLOR_RED}Invalid choice. Please enter a valid option.{CMD_COLOR_DEFAULT}")
+                print_error("Invalid choice. Please enter a valid option.")
 
     def see_reservation_history(self):
-        print("\nReservation History for a Vehicle")
-        try:
-            vehicle_id = int(input("Enter the Vehicle ID to see reservation history: "))
-        except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
-            return
+        while True:
+            print_title("\nAvailable Vehicles:")
+            try:
+                vehicles = self.show_vehicles()
+                vehicle_indexes_list = [i.vehicle_id for i in vehicles]
+            except Exception as ex:
+                print_error(f"\n{ex}")
+                break
+            print("0. Cancel")
 
-        try:
-            reservations = self.reservation_service.get_reservation_history(vehicle_id)
+            selected_vehicle_id = input_menu_choice("\nEnter a VehicleID to See Reservation History (or 0 to Cancel): ")
 
-            print("\nReservation History:")
-            for reservation in reservations:
-                print(reservation)
-        except Exception as ex:
-            print(f"\n{CMD_COLOR_RED}Invalid Input: {ex}{CMD_COLOR_DEFAULT}")
-            return
+            if selected_vehicle_id == 0:
+                break
+
+            elif selected_vehicle_id in vehicle_indexes_list:
+                try:
+                    reservations = self.report_generator.get_reservation_history(selected_vehicle_id)
+
+                    print_info(f"\nReservation History: ")
+                    table = PrettyTable()
+                    table.field_names = ["ReservationID", "CustomerName", "Email", "Phone", "Vehicle", "Color", "RegistrationNumber",
+                                         "Duration", "TotalCost"]
+                    for reservation in reservations:
+                        row = []
+                        for i in reservation:
+                            row.append(i)
+                        table.add_row(row)
+                    print(table)
+                    break
+                except Exception as ex:
+                    print_error(f"\n{ex}")
+
+            else:
+                print_error("Invalid choice. Please enter a valid option.")
+                if len(vehicles) > 15:  # Users will not see the error if the list is long
+                    countdown = 3
+                    while countdown > 0:
+                        print(f"Showing list again in {countdown}...")
+                        time.sleep(1)
+                        countdown -= 1
 
     def see_vehicle_utilization(self):
-        vehicle_id = input("Enter Vehicle ID: ")
-        utilization_data = self.reservation_service.get_utilization_for_vehicle(vehicle_id)
-        if utilization_data:
-            print(f"Utilization for Vehicle {vehicle_id}: {utilization_data}%")
-        else:
-            print(f"No utilization data available for Vehicle {vehicle_id}")
+        while True:
+            print_title("\nAvailable Vehicles:")
+
+            try:
+                available_vehicles = self.show_available_vehicles()
+                vehicle_indexes_list = [i.vehicle_id for i in available_vehicles]
+            except Exception as ex:
+                print_error(f"\n{ex}")
+                break
+            print("0. Cancel")
+
+            selected_vehicle_id = input_menu_choice("\nEnter a VehicleID to See its Utilization (or 0 to Cancel): ")
+
+            if selected_vehicle_id == 0:
+                break
+
+            elif selected_vehicle_id in vehicle_indexes_list:
+                try:
+                    utilization_data = self.report_generator.get_utilization_for_vehicle(selected_vehicle_id)
+                    print_info(f"\nUtilization for Vehicle: {utilization_data}%")
+                    print("*Note: Vehicle Utilization = (Total Reservations / Max Reservations After Service) * 100")
+                    break
+                except Exception as ex:
+                    print_error(f"\n{ex}")
+
+            else:
+                print_error("Invalid choice. Please enter a valid option.")
+                if len(available_vehicles) > 15:  # Users will not see the error if the list is long
+                    countdown = 3
+                    while countdown > 0:
+                        print(f"Showing list again in {countdown}...")
+                        time.sleep(1)
+                        countdown -= 1
+
+    def see_revenue(self):
+        try:
+            revenue = self.report_generator.view_overall_revenue()
+            print_info(f"\nOverall revenue: {revenue}$.")
+        except Exception as ex:
+            print_error(f"\n{ex}")
 
 
 if __name__ == "__main__":

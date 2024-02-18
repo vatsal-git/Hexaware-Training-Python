@@ -2,30 +2,55 @@ import mysql.connector
 
 from exceptions.DatabaseConnectionException import DatabaseConnectionException
 from exceptions.ReservationException import ReservationException
+from interfaces.IReportGenerator import IReportGenerator
+from services.ReservationService import ReservationService
+from services.VehicleService import VehicleService
 
 
-class ReportGenerator:
-    def __init__(self, db_context, reservation_service=None, vehicle_service=None):
-        self.reservation_service = reservation_service
-        self.vehicle_service = vehicle_service
+class ReportGenerator(IReportGenerator, ReservationService, VehicleService):
+    def __init__(self, db_context):
+        super().__init__(db_context)
         self.db_context = db_context
 
-    def generate_reservation_report(self, reservation_id):
-        reservation = self.reservation_service.get_reservation_by_id(reservation_id)
-        if reservation:
-            report = f"Reservation Report\nReservation ID: {reservation.get_reservation_id()}\nCustomer: {reservation.get_customer().get_full_name()}\nVehicle: {reservation.get_vehicle().get_model()}"
-            return report
-        return "Reservation not found."
+    def get_reservation_history(self, vehicle_id):
+        query = """
+            SELECT r.ReservationID, CONCAT(c.FirstName, ' ', c.LastName) AS CustomerName, c.Email, c.PhoneNumber,  CONCAT(v.Make, ' ', v.Model) AS Vehicle, v.Color, v.RegistrationNumber, CONCAT(r.StartDate, ' - ', r.EndDate) AS Duration, r.TotalCost 
+            FROM Reservation r 
+            JOIN Vehicle v on v.VehicleID = r.VehicleID
+            JOIN Customer c on c.CustomerID = r.CustomerID
+            WHERE r.VehicleID = %s            
+        """
+        params = (vehicle_id,)
 
-    def generate_vehicle_report(self, vehicle_id):
-        vehicle = self.vehicle_service.get_vehicle_by_id(vehicle_id)
-        if vehicle:
-            report = f"Vehicle Report\nVehicle ID: {vehicle.get_vehicle_id()}\nModel: {vehicle.get_model()}\nMake: {vehicle.get_make()}\nYear: {vehicle.get_year()}"
-            return report
-        return "Vehicle not found."
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            fetched_reservations = cursor.fetchall()
+
+            if fetched_reservations and len(fetched_reservations) > 0:
+                return [[*item] for item in fetched_reservations]
+            else:
+                raise ReservationException("No Reservations Found.")
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error getting reservations: {err}")
+
+    def get_utilization_for_vehicle(self, vehicle_id):
+        query = "SELECT SUM(DATEDIFF(EndDate, StartDate)) AS TotalDaysUsed FROM Reservation WHERE VehicleID = %s"
+        params = (vehicle_id,)
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            fetched_reservation_count = cursor.fetchone()
+
+            if fetched_reservation_count:
+                total_reservations = fetched_reservation_count[0]
+                return (total_reservations / 10) * 100
+            else:
+                raise ReservationException("No Utilization Found.")
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error getting utilization: {err}")
 
     def view_overall_revenue(self):
-        query = "SELECT SUM(TotalCost) AS OverallRevenue FROM Reservation WHERE Status = 'completed'"
+        query = "SELECT SUM(TotalCost) AS OverallRevenue FROM Reservation"
 
         try:
             cursor, connection = self.db_context.execute_query(query)
@@ -35,6 +60,6 @@ class ReportGenerator:
                 overall_revenue = fetched_overall_revenue[0]
                 return overall_revenue if overall_revenue else 0
             else:
-                raise ReservationException(f"No Revenue found.")
+                raise ReservationException("No Revenue found.")
         except mysql.connector.Error as err:
             raise DatabaseConnectionException(f"Error getting revenue: {err}")

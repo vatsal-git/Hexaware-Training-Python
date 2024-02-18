@@ -1,7 +1,6 @@
 from datetime import datetime
 import mysql.connector
 
-from exceptions.AdminNotFoundException import AdminNotFoundException
 from exceptions.DatabaseConnectionException import DatabaseConnectionException
 from interfaces.IAdminService import IAdminService
 from entities.Admin import Admin
@@ -45,6 +44,7 @@ class AdminService(IAdminService):
     def register_admin(self, admin_data):
         InputValidator.validate_email(admin_data['Email'])
         InputValidator.validate_phone(admin_data['PhoneNumber'])
+        InputValidator.validate_username(admin_data['Username'])
 
         query = "INSERT INTO Admin (FirstName, LastName, Email, PhoneNumber, Username, Password, Role, JoinDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         params = (
@@ -74,10 +74,20 @@ class AdminService(IAdminService):
             admin_data['PhoneNumber'],
             admin_data['AdminID']
         )
-        self.db_context.execute_query(query, params)
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            connection.commit()
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error updating admin: {err}")
 
     def delete_admin(self, admin_id):
         self.get_admin_by_id(admin_id)   # Validate if admin exists
         query = "DELETE FROM Admin WHERE AdminID = %s"
         params = (admin_id,)
-        self.db_context.execute_query(query, params)
+
+        try:
+            cursor, connection = self.db_context.execute_query(query, params)
+            connection.commit()
+        except mysql.connector.Error as err:
+            raise DatabaseConnectionException(f"Error deleting admin: {err}")
